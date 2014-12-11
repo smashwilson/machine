@@ -159,12 +159,16 @@ func RegisterCreateFlags(cmd *flag.FlagSet) interface{} {
 }
 
 func NewDriver(storePath string) (drivers.Driver, error) {
+	return NewDerivedDriver(storePath, &GenericClient{})
+}
+
+func NewDerivedDriver(storePath string, client OpenStackClient) (drivers.Driver, error) {
 	log.WithFields(log.Fields{
 		"storePath": storePath,
-	}).Debug("Instanciate OpenStack driver...")
+	}).Debug("Instantiating OpenStack driver...")
 	return &Driver{
 		storePath: storePath,
-		client:    &GenericClient{},
+		client:    client,
 	}, nil
 }
 
