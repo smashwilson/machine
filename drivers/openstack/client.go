@@ -15,7 +15,7 @@ import (
 	"github.com/rackspace/gophercloud/pagination"
 )
 
-type OpenStackClient interface {
+type Client interface {
 	CreateInstance(d *Driver) (string, error)
 	GetInstanceState(d *Driver) (string, error)
 	StartInstance(d *Driver) error
