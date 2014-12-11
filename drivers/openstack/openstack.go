@@ -162,7 +162,7 @@ func NewDriver(storePath string) (drivers.Driver, error) {
 	return NewDerivedDriver(storePath, &GenericClient{})
 }
 
-func NewDerivedDriver(storePath string, client Client) (drivers.Driver, error) {
+func NewDerivedDriver(storePath string, client Client) (*Driver, error) {
 	log.WithFields(log.Fields{
 		"storePath": storePath,
 	}).Debug("Instantiating OpenStack driver...")
