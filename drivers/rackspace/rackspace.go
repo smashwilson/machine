@@ -95,7 +95,7 @@ func NewDriver(storePath string) (drivers.Driver, error) {
 	}).Info("Instantiating Rackspace driver.")
 
 	client := &Client{}
-	inner, err := openstack.NewDerivedDriver(storePath, &Client{})
+	inner, err := openstack.NewDerivedDriver(storePath, client)
 	if err != nil {
 		return nil, err
 	}
