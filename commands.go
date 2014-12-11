@@ -19,6 +19,7 @@ import (
 	_ "github.com/docker/machine/drivers/digitalocean"
 	_ "github.com/docker/machine/drivers/none"
 	_ "github.com/docker/machine/drivers/openstack"
+	_ "github.com/docker/machine/drivers/rackspace"
 	_ "github.com/docker/machine/drivers/virtualbox"
 	"github.com/docker/machine/state"
 )
