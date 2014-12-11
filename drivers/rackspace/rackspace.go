@@ -117,7 +117,6 @@ func (d *Driver) SetConfigFromFlags(flagsInterface interface{}) error {
 	d.Username = *flags.Username
 	d.APIKey = *flags.APIKey
 	d.Region = *flags.Region
-	d.MachineName = *flags.MachineName
 	d.EndpointType = *flags.EndpointType
 	d.ImageId = *flags.ImageID
 	d.FlavorId = *flags.FlavorID
