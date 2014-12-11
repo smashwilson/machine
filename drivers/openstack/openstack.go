@@ -431,8 +431,7 @@ func (d *Driver) checkConfig() error {
 	if d.NetworkName != "" && d.NetworkId != "" {
 		return fmt.Errorf(errorExclusiveOptions, "Network name", "Network id")
 	}
-
-	if d.EndpointType != "" && (d.EndpointType != "publicURL" || d.EndpointType != "adminURL" || d.EndpointType != "internalURL") {
+	if d.EndpointType != "" && (d.EndpointType != "publicURL" && d.EndpointType != "adminURL" && d.EndpointType != "internalURL") {
 		return fmt.Errorf(errorWrongEndpointType)
 	}
 	return nil
