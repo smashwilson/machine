@@ -62,7 +62,7 @@ func (c *Client) GetInstanceIpAddresses(d *openstack.Driver) ([]openstack.IpAddr
 		return nil, err
 	}
 	return []openstack.IpAddress{
-		openstack.IpAddress{
+		{
 			Network:     "public",
 			Address:     server.AccessIPv4,
 			AddressType: openstack.Fixed,
