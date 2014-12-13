@@ -171,6 +171,33 @@ and CLI option are provided the CLI option takes the precedence.
 | `OS_REGION_NAME`     | `--openstack-region`        |
 | `OS_ENDPOINT_TYPE`   | `--openstack-endpoint-type` |
 
+### Rackspace
+
+Create machines on [Rackspace cloud](http://www.rackspace.com/cloud)
+
+Options:
+
+ - `--rackspace-username`: Rackspace account username
+ - `--rackspace-api-key`: Rackspace API key
+ - `--rackspace-region`: Rackspace region name
+ - `--rackspace-endpoint-type`: Rackspace endpoint type (adminURL, internalURL or the default publicURL)
+ - `--rackspace-image-id`: Rackspace image ID. Default: Ubuntu 14.10 (Utopic Unicorn) (PVHVM)
+ - `--rackspace-flavor-id`: Rackspace flavor ID. Default: General Purpose 1GB
+ - `--rackspace-ssh-user`: SSH user for the newly booted machine. Set to root by default
+ - `--rackspace-ssh-port`: SSH port for the newly booted machine. Set to 22 by default
+
+Environment variables:
+
+Here comes the list of the supported variables with the corresponding options. If both environment
+variable and CLI option are provided the CLI option takes the precedence.
+
+| Environment variable | CLI option                  |
+|----------------------|-----------------------------|
+| `OS_USERNAME`        | `--rackspace-username`      |
+| `OS_API_KEY`         | `--rackspace-ap-key`        |
+| `OS_REGION_NAME`     | `--rackspace-region`        |
+| `OS_ENDPOINT_TYPE`   | `--rackspace-endpoint-type` |
+
 ## Contributing
 
 [![GoDoc](https://godoc.org/github.com/docker/machine?status.png)](https://godoc.org/github.com/docker/machine)
