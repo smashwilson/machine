@@ -30,9 +30,13 @@ type Client interface {
 	GetInstanceIpAddresses(d *Driver) ([]IpAddress, error)
 	CreateKeyPair(d *Driver, name string, publicKey string) error
 	DeleteKeyPair(d *Driver, name string) error
-	GetNetworkId(d *Driver, name string) (string, error)
+	GetNetworkId(d *Driver) (string, error)
 	GetFlavorId(d *Driver, name string) (string, error)
 	GetImageId(d *Driver, name string) (string, error)
+	AssignFloatingIP(d *Driver, floatingIpId string, portId string) error
+	GetFloatingIPs(d *Driver) ([]FloatingIp, error)
+	GetFloatingIpPoolId(d *Driver) (string, error)
+	GetInstancePortId(d *Driver) (string, error)
 }
 
 type GenericClient struct {
@@ -77,16 +81,18 @@ type IpAddress struct {
 	Mac         string
 }
 
+type FloatingIp struct {
+	Id        string
+	Ip        string
+	NetworkId string
+	PortId    string
+}
+
 func (c *GenericClient) GetInstanceState(d *Driver) (string, error) {
 	server, err := c.GetServerDetail(d)
 	if err != nil {
 		return "", err
 	}
-
-	c.getFloatingIPs(d)
-
-	c.getPorts(d)
-
 	return server.Status, nil
 }
 
@@ -153,8 +159,16 @@ func (c *GenericClient) GetInstanceIpAddresses(d *Driver) ([]IpAddress, error) {
 	return addresses, nil
 }
 
-func (c *GenericClient) GetNetworkId(d *Driver, networkName string) (string, error) {
-	opts := networks.ListOpts{Name: d.NetworkName}
+func (c *GenericClient) GetNetworkId(d *Driver) (string, error) {
+	return c.getNetworkId(d, d.NetworkName)
+}
+
+func (c *GenericClient) GetFloatingIpPoolId(d *Driver) (string, error) {
+	return c.getNetworkId(d, d.FloatingIpPool)
+}
+
+func (c *GenericClient) getNetworkId(d *Driver, networkName string) (string, error) {
+	opts := networks.ListOpts{Name: networkName}
 	pager := networks.List(c.Network, opts)
 	networkId := ""
 
@@ -165,7 +179,7 @@ func (c *GenericClient) GetNetworkId(d *Driver, networkName string) (string, err
 		}
 
 		for _, n := range networkList {
-			if n.Name == d.NetworkName {
+			if n.Name == networkName {
 				networkId = n.ID
 				return false, nil
 			}
@@ -250,16 +264,44 @@ func (c *GenericClient) GetServerDetail(d *Driver) (*servers.Server, error) {
 	return server, nil
 }
 
-func (c *GenericClient) getFloatingIPs(d *Driver) ([]string, error) {
-	pager := floatingips.List(c.Network, floatingips.ListOpts{})
+func (c *GenericClient) AssignFloatingIP(d *Driver, floatingIpId string, portId string) error {
+	if floatingIpId == "" {
+		floatingIp, err := floatingips.Create(c.Network, floatingips.CreateOpts{
+			FloatingNetworkID: d.FloatingIpPoolId,
+			PortID:            portId,
+		}).Extract()
+		if err != nil {
+			return err
+		}
+		floatingIpId = floatingIp.ID
+	}
+	_, err := floatingips.Update(c.Network, floatingIpId, floatingips.UpdateOpts{
+		PortID: portId,
+	}).Extract()
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
+func (c *GenericClient) GetFloatingIPs(d *Driver) ([]FloatingIp, error) {
+	pager := floatingips.List(c.Network, floatingips.ListOpts{
+		FloatingNetworkID: d.FloatingIpPoolId,
+	})
+
+	ips := []FloatingIp{}
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		floatingipList, err := floatingips.ExtractFloatingIPs(page)
 		if err != nil {
 			return false, err
 		}
 		for _, f := range floatingipList {
-			log.Debug("### FloatingIP => %s", f)
+			ips = append(ips, FloatingIp{
+				Id:        f.ID,
+				Ip:        f.FloatingIP,
+				NetworkId: f.FloatingNetworkID,
+				PortId:    f.PortID,
+			})
 		}
 		return true, nil
 	})
@@ -267,29 +309,32 @@ func (c *GenericClient) getFloatingIPs(d *Driver) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return ips, nil
 }
 
-func (c *GenericClient) getPorts(d *Driver) ([]string, error) {
+func (c *GenericClient) GetInstancePortId(d *Driver) (string, error) {
 	pager := ports.List(c.Network, ports.ListOpts{
-		DeviceID: d.MachineId,
+		DeviceID:  d.MachineId,
+		NetworkID: d.NetworkId,
 	})
 
+	var portId string
 	err := pager.EachPage(func(page pagination.Page) (bool, error) {
 		portList, err := ports.ExtractPorts(page)
 		if err != nil {
 			return false, err
 		}
 		for _, port := range portList {
-			log.Debug("### Port => %s", port)
+			portId = port.ID
+			return false, nil
 		}
 		return true, nil
 	})
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return nil, nil
+	return portId, nil
 }
 
 func (c *GenericClient) InitComputeClient(d *Driver) error {
