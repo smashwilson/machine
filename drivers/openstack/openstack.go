@@ -489,7 +489,7 @@ func (d *Driver) resolveIds() error {
 		if err := d.initCompute(); err != nil {
 			return err
 		}
-		flavorId, err := d.client.GetFlavorId(d, d.FlavorName)
+		flavorId, err := d.client.GetFlavorId(d)
 
 		if err != nil {
 			return err
@@ -510,7 +510,7 @@ func (d *Driver) resolveIds() error {
 		if err := d.initCompute(); err != nil {
 			return err
 		}
-		imageId, err := d.client.GetImageId(d, d.ImageName)
+		imageId, err := d.client.GetImageId(d)
 
 		if err != nil {
 			return err
