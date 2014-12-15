@@ -113,7 +113,7 @@ func GetCreateFlags() []cli.Flag {
 		cli.StringFlag{
 			EnvVar: "OS_ENDPOINT_TYPE",
 			Name:   "openstack-endpoint-type",
-			Usage:  "OpenStack endpoint type (adminURL, internalURL or the default publicURL)",
+			Usage:  "OpenStack endpoint type (adminURL, internalURL or publicURL)",
 			Value:  "",
 		},
 		cli.StringFlag{
@@ -158,12 +158,12 @@ func GetCreateFlags() []cli.Flag {
 		},
 		cli.StringFlag{
 			Name:  "openstack-ssh-user",
-			Usage: "OpenStack SSH user. Set to root by default",
+			Usage: "OpenStack SSH user",
 			Value: "root",
 		},
 		cli.IntFlag{
 			Name:  "openstack-ssh-port",
-			Usage: "OpenStack SSH port. Set to 22 by default",
+			Usage: "OpenStack SSH port",
 			Value: 22,
 		},
 		// Using a StringFlag rather than a BoolFlag because
