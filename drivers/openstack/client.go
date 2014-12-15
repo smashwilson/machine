@@ -31,8 +31,8 @@ type Client interface {
 	CreateKeyPair(d *Driver, name string, publicKey string) error
 	DeleteKeyPair(d *Driver, name string) error
 	GetNetworkId(d *Driver) (string, error)
-	GetFlavorId(d *Driver, name string) (string, error)
-	GetImageId(d *Driver, name string) (string, error)
+	GetFlavorId(d *Driver) (string, error)
+	GetImageId(d *Driver) (string, error)
 	AssignFloatingIP(d *Driver, floatingIpId string, portId string) error
 	GetFloatingIPs(d *Driver) ([]FloatingIp, error)
 	GetFloatingIpPoolId(d *Driver) (string, error)
@@ -191,7 +191,7 @@ func (c *GenericClient) getNetworkId(d *Driver, networkName string) (string, err
 	return networkId, err
 }
 
-func (c *GenericClient) GetFlavorId(d *Driver, flavorName string) (string, error) {
+func (c *GenericClient) GetFlavorId(d *Driver) (string, error) {
 	pager := flavors.ListDetail(c.Compute, nil)
 	flavorId := ""
 
@@ -214,8 +214,8 @@ func (c *GenericClient) GetFlavorId(d *Driver, flavorName string) (string, error
 	return flavorId, err
 }
 
-func (c *GenericClient) GetImageId(d *Driver, imageName string) (string, error) {
-	opts := images.ListOpts{Name: imageName}
+func (c *GenericClient) GetImageId(d *Driver) (string, error) {
+	opts := images.ListOpts{Name: d.ImageName}
 	pager := images.ListDetail(c.Compute, opts)
 	imageId := ""
 
