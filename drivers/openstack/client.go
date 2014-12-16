@@ -33,7 +33,7 @@ type Client interface {
 	GetNetworkId(d *Driver) (string, error)
 	GetFlavorId(d *Driver) (string, error)
 	GetImageId(d *Driver) (string, error)
-	AssignFloatingIP(d *Driver, floatingIpId string, portId string) error
+	AssignFloatingIP(d *Driver, floatingIp *FloatingIp, portId string) error
 	GetFloatingIPs(d *Driver) ([]FloatingIp, error)
 	GetFloatingIpPoolId(d *Driver) (string, error)
 	GetInstancePortId(d *Driver) (string, error)
@@ -264,18 +264,21 @@ func (c *GenericClient) GetServerDetail(d *Driver) (*servers.Server, error) {
 	return server, nil
 }
 
-func (c *GenericClient) AssignFloatingIP(d *Driver, floatingIpId string, portId string) error {
-	if floatingIpId == "" {
-		floatingIp, err := floatingips.Create(c.Network, floatingips.CreateOpts{
+func (c *GenericClient) AssignFloatingIP(d *Driver, floatingIp *FloatingIp, portId string) error {
+	if floatingIp.Id == "" {
+		f, err := floatingips.Create(c.Network, floatingips.CreateOpts{
 			FloatingNetworkID: d.FloatingIpPoolId,
 			PortID:            portId,
 		}).Extract()
 		if err != nil {
 			return err
 		}
-		floatingIpId = floatingIp.ID
+		floatingIp.Id = f.ID
+		floatingIp.Ip = f.FloatingIP
+		floatingIp.NetworkId = f.FloatingNetworkID
+		floatingIp.PortId = f.PortID
 	}
-	_, err := floatingips.Update(c.Network, floatingIpId, floatingips.UpdateOpts{
+	_, err := floatingips.Update(c.Network, floatingIp.Id, floatingips.UpdateOpts{
 		PortID: portId,
 	}).Extract()
 	if err != nil {

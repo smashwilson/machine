@@ -623,7 +623,7 @@ func (d *Driver) assignFloatingIp() error {
 		return err
 	}
 
-	floatingIpId := ""
+	var floatingIp *FloatingIp
 
 	log.WithFields(log.Fields{
 		"MachineId": d.MachineId,
@@ -636,22 +636,22 @@ func (d *Driver) assignFloatingIp() error {
 				"MachineId": d.MachineId,
 				"IP":        ip.Ip,
 			}).Debugf("Available floating IP found")
-			floatingIpId = ip.Id
+			floatingIp = &ip
 			break
 		}
 	}
 
-	if floatingIpId == "" {
+	if floatingIp == nil {
+		floatingIp = &FloatingIp{}
 		log.WithField("MachineId", d.MachineId).Debugf("No available floating IP found. Allocating a new one...")
 	} else {
 		log.WithField("MachineId", d.MachineId).Debugf("Assigning floating IP to the instance")
 	}
 
-	d.client.AssignFloatingIP(d, floatingIpId, portId)
-	if err != nil {
+	if err := d.client.AssignFloatingIP(d, floatingIp, portId); err != nil {
 		return err
 	}
-
+	d.Ip = floatingIp.Ip
 	return nil
 }
 
