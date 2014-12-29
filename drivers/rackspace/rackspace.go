@@ -66,7 +66,7 @@ func GetCreateFlags() []cli.Flag {
 		},
 		cli.StringFlag{
 			Name:  "rackspace-image-id",
-			Usage: "Rackspace image ID. Default: Ubuntu 14.10 (Utopic Unicorn) (PVHVM)",
+			Usage: "Rackspace image ID. Default: Ubuntu 14.04 LTS (Trusty Tahr) (PVHVM)",
 			Value: "",
 		},
 		cli.StringFlag{
@@ -143,10 +143,10 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	}
 
 	if d.ImageId == "" {
-		// Default to the Ubuntu 14.10 image.
+		// Default to the Ubuntu 14.04 image.
 		// This is done here, rather than in the option registration, to keep the default value
 		// from making "machine create --help" ugly.
-		d.ImageId = "0766e5df-d60a-4100-ae8c-07f27ec0148f"
+		d.ImageId = "598a4282-f14b-4e50-af4c-b3e52749d9f9"
 	}
 
 	if d.EndpointType != "publicURL" && d.EndpointType != "adminURL" && d.EndpointType != "internalURL" {
