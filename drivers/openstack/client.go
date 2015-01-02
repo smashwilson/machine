@@ -277,6 +277,7 @@ func (c *GenericClient) AssignFloatingIP(d *Driver, floatingIp *FloatingIp, port
 		floatingIp.Ip = f.FloatingIP
 		floatingIp.NetworkId = f.FloatingNetworkID
 		floatingIp.PortId = f.PortID
+		return nil
 	}
 	_, err := floatingips.Update(c.Network, floatingIp.Id, floatingips.UpdateOpts{
 		PortID: portId,
