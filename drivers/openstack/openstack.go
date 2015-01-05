@@ -711,7 +711,7 @@ func (d *Driver) installDocker() error {
 	}); err != nil {
 		log.Error("Docker installation failed")
 		log.Error(
-			"The driver assume your instance is running Ubuntu. If this is no the case, you should use the ",
+			"The driver assume your instance is running Ubuntu. If this is not the case, you should use the ",
 			"option --openstack-docker-install=false when creating the machine and then install manually",
 		)
 		return err
