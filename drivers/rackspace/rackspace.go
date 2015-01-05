@@ -135,6 +135,9 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.SSHPort = flags.Int("rackspace-ssh-port")
 	d.EnableDockerInstall = flags.String("rackspace-docker-install") == "true"
 
+	if d.Region == "" {
+		return missingEnvOrOption("Region", "OS_REGION_NAME", "--rackspace-region")
+	}
 	if d.Username == "" {
 		return missingEnvOrOption("Username", "OS_USERNAME", "--rackspace-username")
 	}
