@@ -130,8 +130,8 @@
 		},
 		{
 			"ImportPath": "github.com/rackspace/gophercloud",
-			"Comment": "v1.0.0-232-g2e7ab37",
-			"Rev": "2e7ab378257b8723e02cbceac7410be4db286436"
+			"Comment": "v1.0.0-473-g7ca169d",
+			"Rev": "7ca169d371b29e3dbab9e631c3a6151896b06330"
 		},
 		{
 			"ImportPath": "github.com/smartystreets/go-aws-auth",
