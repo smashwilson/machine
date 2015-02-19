@@ -23,6 +23,7 @@ const (
 
 type Driver struct {
 	AuthUrl             string
+	Insecure            bool
 	Username            string
 	Password            string
 	TenantName          string
@@ -53,6 +54,7 @@ type Driver struct {
 
 type CreateFlags struct {
 	AuthUrl        *string
+	Insecure       *bool
 	Username       *string
 	Password       *string
 	TenantName     *string
@@ -85,6 +87,10 @@ func GetCreateFlags() []cli.Flag {
 			Name:   "openstack-auth-url",
 			Usage:  "OpenStack authentication URL",
 			Value:  "",
+		},
+		cli.BoolFlag{
+			Name:  "openstack-insecure",
+			Usage: "Disable TLS credential checking.",
 		},
 		cli.StringFlag{
 			EnvVar: "OS_USERNAME",
@@ -209,6 +215,7 @@ func (d *Driver) DriverName() string {
 
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.AuthUrl = flags.String("openstack-auth-url")
+	d.Insecure = flags.Bool("openstack-insecure")
 	d.Username = flags.String("openstack-username")
 	d.Password = flags.String("openstack-password")
 	d.TenantName = flags.String("openstack-tenant-name")
