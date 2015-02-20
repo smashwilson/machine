@@ -413,7 +413,7 @@ func (c *GenericClient) Authenticate(d *Driver) error {
 		AllowReauth:      true,
 	}
 
-	provider, err := openstack.AuthenticatedClient(opts)
+	provider, err := openstack.NewClient(opts.IdentityEndpoint)
 	if err != nil {
 		return err
 	}
@@ -423,6 +423,11 @@ func (c *GenericClient) Authenticate(d *Driver) error {
 		config := &tls.Config{InsecureSkipVerify: true}
 		transport := &http.Transport{TLSClientConfig: config}
 		provider.HTTPClient.Transport = transport
+	}
+
+	err = openstack.Authenticate(provider, opts)
+	if err != nil {
+		return err
 	}
 
 	c.Provider = provider
